@@ -12,21 +12,15 @@
     "type": "git",
     "url": "git+https://github.com/rwer9982/express-mesto-gha.git"
   },
-  "author": "",
+  "author": "Evgeniy Makin",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/rwer9982/express-mesto-gha/issues"
   },
   "homepage": "https://github.com/rwer9982/express-mesto-gha#readme",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.59.0",
     "eslint": "^8.38.0",
-    "eslint-config-standard-with-typescript": "^34.0.1",
     "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^15.7.0",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-react": "^7.32.2",
-    "typescript": "^5.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
     "nodemon": "^2.0.22"
   },
