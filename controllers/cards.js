@@ -1,7 +1,12 @@
 const Card = require('../models/cardSchema');
-const ValidationError = require('../errors/ValidationError');
-const ServerError = require('../errors/ServerError');
+// const ValidationError = require('../errors/ValidationError');
+// const ServerError = require('../errors/ServerError');
 const NotFoundError = require('../errors/NotFoundError');
+const {
+  BAD_REQUEST,
+  INTERNAL_SERVER_ERROR,
+  STATUS_OK,
+} = require('../errors/errors');
 
 const createCard = (req, res) => {
   console.log(req.user._id);
@@ -13,37 +18,31 @@ const createCard = (req, res) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError('Произошла ошибка валидации');
-      } if ((err.name === 'ServerError')) {
-        throw new ServerError('ошибка сервера');
+        res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+      } else {
+        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
-      return res.send({ message: 'ошибка' });
     });
 };
 
 const getCards = (req, res) => {
   Card.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new ValidationError('Произошла ошибка валидации');
-      } if ((err.name === 'ServerError')) {
-        throw new ServerError('ошибка сервера');
-      }
-      return res.send({ message: 'ошибка' });
-    });
+    .then((users) => res.status(STATUS_OK).send(users))
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'ошибка' }));
 };
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
   Card.findById({ _id: cardId })
+    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then(() => Card.findByIdAndRemove({ _id: cardId }))
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        throw new NotFoundError('пользователь не найден');
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+      } else {
+        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
-      return res.send({ message: 'ошибка' });
     });
 };
 
@@ -51,32 +50,28 @@ const likeCard = (req, res) => Card.findByIdAndUpdate(
   req.params.cardId,
   { $addToSet: { likes: req.user._id } },
   { new: true },
-).then((card) => res.status(200).send(card))
+).orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
+  .then((card) => res.status(STATUS_OK).send(card))
   .catch((err) => {
-    if (err.name === 'ValidationError') {
-      throw new ValidationError('Произошла ошибка валидации');
-    } if (err.name === 'NotFoundError') {
-      throw new NotFoundError('пользователь не найден');
-    } if ((err.name === 'ServerError')) {
-      throw new ServerError('ошибка сервера');
+    if (err.name === 'CastError') {
+      res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+    } else {
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
     }
-    return res.send({ message: 'ошибка' });
   });
 
 const dislikeCard = (req, res) => Card.findByIdAndUpdate(
   req.params.cardId,
   { $pull: { likes: req.user._id } },
   { new: true },
-).then((card) => res.status(200).send(card))
+).orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
+  .then((card) => res.status(STATUS_OK).send(card))
   .catch((err) => {
-    if (err.name === 'ValidationError') {
-      throw new ValidationError('Произошла ошибка валидации');
-    } if (err.name === 'NotFoundError') {
-      throw new NotFoundError('пользователь не найден');
-    } if ((err.name === 'ServerError')) {
-      throw new ServerError('ошибка сервера');
+    if (err.name === 'CastError') {
+      res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+    } else {
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
     }
-    return res.send({ message: 'ошибка' });
   });
 
 module.exports = {
