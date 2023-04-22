@@ -7,6 +7,7 @@ const {
   BAD_REQUEST,
   INTERNAL_SERVER_ERROR,
   STATUS_OK,
+  NOT_FOUND,
 } = require('../errors/errors');
 
 const getUsers = (req, res) => {
@@ -29,7 +30,7 @@ const createUser = (req, res) => {
     });
 };
 
-const getUserId = (req, res, next) => {
+const getUserId = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
@@ -37,8 +38,11 @@ const getUserId = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+      } if (err.statusCode === 404) {
+        res.status(NOT_FOUND).send({ message: 'Пользователь с указанным id не существует' });
+      } else {
+        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
-      next(err);
     });
 };
 
@@ -50,6 +54,8 @@ const updateUserInfo = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+      } if (err.statusCode === 404) {
+        res.status(NOT_FOUND).send({ message: 'Пользователь с указанным id не существует' });
       } else {
         res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
@@ -64,6 +70,8 @@ const updateUserAvatar = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+      } if (err.statusCode === 404) {
+        res.status(NOT_FOUND).send({ message: 'Пользователь с указанным id не существует' });
       } else {
         res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }

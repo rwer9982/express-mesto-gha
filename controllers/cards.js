@@ -6,6 +6,7 @@ const {
   BAD_REQUEST,
   INTERNAL_SERVER_ERROR,
   STATUS_OK,
+  NOT_FOUND,
 } = require('../errors/errors');
 
 const createCard = (req, res) => {
@@ -40,6 +41,8 @@ const deleteCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+      } if (err.statusCode === 404) {
+        res.status(NOT_FOUND).send({ message: 'Пользователь с указанным id не существует' });
       } else {
         res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
@@ -55,6 +58,8 @@ const likeCard = (req, res) => Card.findByIdAndUpdate(
   .catch((err) => {
     if (err.name === 'CastError') {
       res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+    } if (err.statusCode === 404) {
+      res.status(NOT_FOUND).send({ message: 'Пользователь с указанным id не существует' });
     } else {
       res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
     }
@@ -69,6 +74,8 @@ const dislikeCard = (req, res) => Card.findByIdAndUpdate(
   .catch((err) => {
     if (err.name === 'CastError') {
       res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+    } if (err.statusCode === 404) {
+      res.status(NOT_FOUND).send({ message: 'Пользователь с указанным id не существует' });
     } else {
       res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
     }
