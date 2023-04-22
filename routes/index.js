@@ -3,10 +3,14 @@ const router = require('express').Router();
 const usersRouter = require('./users');
 const cardsRouter = require('./cards');
 
+const {
+  NOT_FOUND,
+} = require('../errors/errors');
+
 router.use('/cards', cardsRouter);
 router.use('/users', usersRouter);
-router.use('/users', (req, res) => {
-  res.status(404).send({ error: 'Ошибка index.js' });
+router.use('/', (req, res) => {
+  res.status(NOT_FOUND).send({ error: 'Ошибка пути' });
 });
 
 module.exports = router;
