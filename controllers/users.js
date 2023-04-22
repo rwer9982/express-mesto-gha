@@ -52,7 +52,7 @@ const updateUserInfo = (req, res) => {
     .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
       } if (err.statusCode === 404) {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным id не существует' });
