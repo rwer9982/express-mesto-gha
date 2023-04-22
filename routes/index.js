@@ -10,7 +10,7 @@ const {
 router.use('/cards', cardsRouter);
 router.use('/users', usersRouter);
 router.use('/', (req, res) => {
-  res.status(NOT_FOUND).send({ error: 'Ошибка пути' });
+  res.status(NOT_FOUND).send({ message: 'Ошибка пути' });
 });
 
 module.exports = router;
