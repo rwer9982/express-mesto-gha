@@ -29,17 +29,16 @@ const createUser = (req, res) => {
     });
 };
 
-const getUserId = (req, res) => {
+const getUserId = (req, res, next) => {
   const { userId } = req.params;
-  return User.findById(userId)
-    .orFail(() => { throw NotFoundError('Пользователь с указанным id не существует'); })
+  User.findById(userId)
+    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
-      } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
+      next(err);
     });
 };
 
