@@ -31,8 +31,8 @@ const createUser = (req, res) => {
 
 const getUserId = (req, res) => {
   const { userId } = req.params;
-  User.findById(userId)
-    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
+  return User.findById(userId)
+    .orFail(() => { throw NotFoundError('Пользователь с указанным id не существует'); })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
