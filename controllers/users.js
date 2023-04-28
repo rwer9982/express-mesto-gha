@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
 // const ValidationError = require('../errors/ValidationError');
 // const ServerError = require('../errors/ServerError');
@@ -17,9 +19,13 @@ const getUsers = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => res.status(STATUS_OK).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -78,10 +84,55 @@ const updateUserAvatar = (req, res) => {
     });
 };
 
+const login = (req, res) => {
+  const { email, password } = req.body;
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
+
+      // сравниваем переданный пароль и хеш из базы
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Неправильные почта или пароль'));
+          }
+          return user;
+        })
+        .then(() => {
+          const token = jwt.sign(
+            { _id: user._id },
+            'some-secret-key',
+            { expiresIn: '7d' },
+          );
+          console.log(token);
+          res.status(STATUS_OK).send({ message: 'Успешный вход', token });
+        });
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
+};
+
+const getUserInfo = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        res.status(401).send({ message: 'Пользователь не найден' });
+      }
+      res.status(STATUS_OK).send(user);
+    });
+};
+
 module.exports = {
   createUser,
   getUsers,
   getUserId,
   updateUserInfo,
   updateUserAvatar,
+  login,
+  getUserInfo,
 };
