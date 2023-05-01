@@ -65,7 +65,7 @@ const getUserId = (req, res) => {
 const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
+    // .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
