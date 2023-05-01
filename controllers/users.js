@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
 // const ValidationError = require('../errors/ValidationError');
-const ExistingMailError = require('../errors/ExistingMailError');
+// const ExistingMailError = require('../errors/ExistingMailError');
 const NotFoundError = require('../errors/NotFoundError');
 
 const {
@@ -27,7 +27,7 @@ const createUser = (req, res) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .orFail(() => new ExistingMailError('Пользователь с таким E-mail уже существует'))
+    // .orFail(() => new ExistingMailError('Пользователь с таким E-mail уже существует'))
     .then((user) => res.status(STATUS_OK).send({
       name: user.name,
       about: user.about,

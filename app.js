@@ -28,9 +28,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/signin', joiErrorsLogin, login);
 app.post('/signup', joiErrorsCreateUser, createUser);
-app.use(errors());
 
 app.use(routes);
+
+app.use(errors());
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
