@@ -1,6 +1,6 @@
 const userRouter = require('express').Router();
 // const { errors } = require('celebrate');
-const { joiErrorsUpdateUserInfo, joiErrorsUpdateUserAvatar } = require('../errors/joiErrors');
+const { joiErrorsUpdateUserInfo, joiErrorsUpdateUserAvatar, joiErrorsGetUserId } = require('../errors/joiErrors');
 
 const {
   //   createUser,
@@ -12,7 +12,7 @@ const {
 } = require('../controllers/users');
 
 userRouter.get('/', getUsers);
-userRouter.get('/:userId', getUserId);
+userRouter.get('/:userId', joiErrorsGetUserId, getUserId);
 // userRouter.post('/', createUser);
 userRouter.patch('/me', joiErrorsUpdateUserInfo, updateUserInfo);
 userRouter.patch('/me/avatar', joiErrorsUpdateUserAvatar, updateUserAvatar);
