@@ -49,13 +49,13 @@ const createUser = (req, res, next) => {
 const getUserId = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
-    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
+    // .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.statusCode === 400) {
         next(new ValidationError('Некорректный данные'));
       } else if (err.statusCode === 404) {
-        next(new ExistingMailError('Пользователь с указанным id не существует'));
+        next(new NotFoundError('Пользователь с указанным id не существует'));
       } else {
         next(err);
       }
