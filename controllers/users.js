@@ -49,7 +49,7 @@ const createUser = (req, res, next) => {
 const getUserId = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
-    // .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
+    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.statusCode === 400) {
