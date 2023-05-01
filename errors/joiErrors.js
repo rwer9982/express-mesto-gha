@@ -17,9 +17,9 @@ const joiErrorsCreateUser = celebrate({
   }),
 });
 
-const joiErrorsgetUserId = celebrate({
+const joiErrorsGetUserId = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().hex().length(24),
+    _id: Joi.string().hex().length(24),
   }),
 });
 
@@ -41,5 +41,5 @@ module.exports = {
   joiErrorsCreateUser,
   joiErrorsCreateCard,
   joiErrorsUpdateUserAvatar,
-  joiErrorsgetUserId,
+  joiErrorsGetUserId,
 };
