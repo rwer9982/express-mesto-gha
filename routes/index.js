@@ -10,7 +10,7 @@ const {
 
 router.use('/cards', auth, cardsRouter);
 router.use('/users', auth, usersRouter);
-router.use('/', (req, res) => {
+router.use('/', auth, (req, res) => {
   res.status(NOT_FOUND).send({ message: 'Ошибка пути' });
 });
 
