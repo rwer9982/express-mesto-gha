@@ -54,8 +54,6 @@ const getUserId = (req, res, next) => {
     .catch((err) => {
       if (err.statusCode === 400) {
         next(new ValidationError('Некорректный данные'));
-      } else if (err.statusCode === 404) {
-        next(new NotFoundError('Пользователь с указанным id не существует'));
       } else {
         next(err);
       }
