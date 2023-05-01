@@ -52,7 +52,7 @@ const getUserId = (req, res, next) => {
     .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.statusCode === 400) {
         next(new ValidationError('Некорректный данные'));
       } else if (err.statusCode === 404) {
         next(new ExistingMailError('Пользователь с указанным id не существует'));
