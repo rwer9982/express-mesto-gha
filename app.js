@@ -2,8 +2,10 @@ const express = require('express');
 // const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const routes = require('./routes');
 const { createUser, login } = require('./controllers/users');
+const { joiErrorsCreateUser } = require('./errors/joiErrors');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -25,7 +27,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // });
 
 app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signup', joiErrorsCreateUser, createUser);
+app.use(errors());
 
 app.use(routes);
 
