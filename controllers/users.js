@@ -130,9 +130,9 @@ const login = (req, res) => {
 const getUserInfo = (req, res) => {
   User.findById(req.user._id)
     .then((user) => {
-      if (!user) {
-        res.status(401).send({ message: 'Пользователь не найден' });
-      }
+      //       if (!user) {
+      //         res.status(401).send({ message: 'Пользователь не найден' });
+      //       }
       res.status(STATUS_OK).send(user);
     });
 };
