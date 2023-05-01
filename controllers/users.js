@@ -36,10 +36,10 @@ const createUser = (req, res, next) => {
       email: user.email,
     }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new ValidationError('Некорректный данные'));
-      } else if (err.code === 11000) {
+      if (err.code === 11000) {
         next(new ExistingMailError('Пользователь с таким E-mail уже существует'));
+      } else if (err.name === 'ValidationError') {
+        next(new ValidationError('Некорректный данные'));
       } else {
         next(err);
       }
