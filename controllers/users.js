@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
-// const ValidationError = require('../errors/ValidationError');
-// const ExistingMailError = require('../errors/ExistingMailError');
+const ValidationError = require('../errors/ValidationError');
+const ExistingMailError = require('../errors/ExistingMailError');
 const NotFoundError = require('../errors/NotFoundError');
 
 const {
@@ -10,7 +10,7 @@ const {
   INTERNAL_SERVER_ERROR,
   STATUS_OK,
   NOT_FOUND,
-  EXISTING_MAIL,
+  // EXISTING_MAIL,
 } = require('../errors/errors');
 
 const getUsers = (req, res) => {
@@ -19,7 +19,7 @@ const getUsers = (req, res) => {
     .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'ошибка' }));
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -37,11 +37,11 @@ const createUser = (req, res) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+        next(new ValidationError('Некорректный данные'));
       } else if (err.code === 11000) {
-        res.status(EXISTING_MAIL).send({ message: 'Пользователь с таким E-mail уже существует' });
+        next(new ExistingMailError('Пользователь с таким E-mail уже существует'));
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        next(err);
       }
     });
 };
