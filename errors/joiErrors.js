@@ -43,6 +43,12 @@ const joiErrorsUpdateUserAvatar = celebrate({
   }),
 });
 
+const joiErrorsFindCardId = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().hex().length(24),
+  }),
+});
+
 module.exports = {
   joiErrorsLogin,
   joiErrorsCreateUser,
@@ -50,4 +56,5 @@ module.exports = {
   joiErrorsUpdateUserAvatar,
   joiErrorsGetUserId,
   joiErrorsUpdateUserInfo,
+  joiErrorsFindCardId,
 };

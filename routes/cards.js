@@ -1,5 +1,5 @@
 const cardRouter = require('express').Router();
-const { joiErrorsCreateCard } = require('../errors/joiErrors');
+const { joiErrorsCreateCard, joiErrorsFindCardId } = require('../errors/joiErrors');
 const {
   createCard,
   getCards,
@@ -10,8 +10,8 @@ const {
 
 cardRouter.post('/', joiErrorsCreateCard, createCard);
 cardRouter.get('/', getCards);
-cardRouter.delete('/:cardId', deleteCard);
-cardRouter.put('/:cardId/likes', likeCard);
-cardRouter.delete('/:cardId/likes', dislikeCard);
+cardRouter.delete('/:cardId', joiErrorsFindCardId, deleteCard);
+cardRouter.put('/:cardId/likes', joiErrorsFindCardId, likeCard);
+cardRouter.delete('/:cardId/likes', joiErrorsFindCardId, dislikeCard);
 
 module.exports = cardRouter;
