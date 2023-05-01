@@ -36,28 +36,28 @@ const createUser = (req, res, next) => {
       email: user.email,
     }))
     .catch((err) => {
-      if (err.code === 11000) {
-        next(new ExistingMailError('Пользователь с таким E-mail уже существует'));
-      } else if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         next(new ValidationError('Некорректный данные'));
+      } else if (err.code === 11000) {
+        next(new ExistingMailError('Пользователь с таким E-mail уже существует'));
       } else {
         next(err);
       }
     });
 };
 
-const getUserId = (req, res) => {
+const getUserId = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+        next(new ValidationError('Некорректный данные'));
       } else if (err.statusCode === 404) {
-        res.status(NOT_FOUND).send({ message: 'Пользователь с указанным id не существует' });
+        next(new ExistingMailError('Пользователь с указанным id не существует'));
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        next(err);
       }
     });
 };
