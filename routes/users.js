@@ -2,7 +2,7 @@ const userRouter = require('express').Router();
 const { joiErrorsgetUserId } = require('../errors/joiErrors');
 
 const {
-//   createUser,
+  //   createUser,
   getUsers,
   getUserId,
   updateUserInfo,
