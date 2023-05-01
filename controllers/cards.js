@@ -34,6 +34,7 @@ const getCards = (req, res) => {
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
+  //   const userId = req.user._id;
   Card.findById({ _id: cardId })
     .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then(() => Card.findByIdAndRemove({ _id: cardId }))
