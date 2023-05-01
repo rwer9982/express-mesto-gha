@@ -17,6 +17,12 @@ const joiErrorsCreateUser = celebrate({
   }),
 });
 
+const joiErrorsgetUserId = celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().length(24),
+  }),
+});
+
 const joiErrorsCreateCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
@@ -35,4 +41,5 @@ module.exports = {
   joiErrorsCreateUser,
   joiErrorsCreateCard,
   joiErrorsUpdateUserAvatar,
+  joiErrorsgetUserId,
 };
