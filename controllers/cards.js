@@ -1,84 +1,80 @@
 const Card = require('../models/cardSchema');
-// const ValidationError = require('../errors/ValidationError');
-// const ServerError = require('../errors/ServerError');
+const ValidationError = require('../errors/ValidationError');
+const NoAccessError = require('../errors/NoAccessError');
 const NotFoundError = require('../errors/NotFoundError');
 const {
-  BAD_REQUEST,
-  INTERNAL_SERVER_ERROR,
+  // BAD_REQUEST,
+  // INTERNAL_SERVER_ERROR,
   STATUS_OK,
-  NOT_FOUND,
+  // NOT_FOUND,
 } = require('../errors/errors');
 
-const createCard = (req, res) => {
-  console.log(req.user._id);
+const createCard = (req, res, next) => {
   const ownerId = req.user._id;
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: ownerId })
-    .then((card) => Card.populate(card, 'owner'))
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+        next(new ValidationError('Некорректный данные'));
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        next(err);
       }
     });
 };
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((users) => res.status(STATUS_OK).send(users))
-    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'ошибка' }));
+    .catch((err) => next(err));
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  //   const userId = req.user._id;
+  const userId = req.user._id;
   Card.findById({ _id: cardId })
-    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
-    .then(() => Card.findByIdAndRemove({ _id: cardId }))
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
-      } else if (err.statusCode === 404) {
-        res.status(NOT_FOUND).send({ message: 'Карточка с указанным id не существует' });
+    .orFail(() => new NotFoundError('Карточка с указанным id не существует'))
+    .then((card) => {
+      if (!card.owner.equals(userId)) {
+        throw new NoAccessError('Карточку может удалить только её создатель');
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        Card.findByIdAndRemove({ _id: cardId });
       }
-    });
+    })
+    .then((card) => res.send(card))
+    .catch(next);
 };
 
-const likeCard = (req, res) => Card.findByIdAndUpdate(
+const likeCard = (req, res, next) => Card.findByIdAndUpdate(
   req.params.cardId,
   { $addToSet: { likes: req.user._id } },
   { new: true },
-).orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
+).orFail(() => new NotFoundError('Карточка с указанным id не существует'))
   .then((card) => res.status(STATUS_OK).send(card))
   .catch((err) => {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+      next(new ValidationError('Некорректный данные'));
     } else if (err.statusCode === 404) {
-      res.status(NOT_FOUND).send({ message: 'Карточка с указанным id не существует' });
+      next(new NotFoundError('Карточка с указанным id не существует'));
     } else {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+      next(err);
     }
   });
 
-const dislikeCard = (req, res) => Card.findByIdAndUpdate(
+const dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
   req.params.cardId,
   { $pull: { likes: req.user._id } },
   { new: true },
-).orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
+).orFail(() => new NotFoundError('Карточка с указанным id не существует'))
   .then((card) => res.status(STATUS_OK).send(card))
   .catch((err) => {
     if (err.name === 'CastError') {
-      res.status(BAD_REQUEST).send({ message: 'Некорректные данные' });
+      next(new ValidationError('Некорректный данные'));
     } else if (err.statusCode === 404) {
-      res.status(NOT_FOUND).send({ message: 'Карточка с указанным id не существует' });
+      next(new NotFoundError('Карточка с указанным id не существует'));
     } else {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+      next(err);
     }
   });
 
