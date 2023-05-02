@@ -14,6 +14,8 @@ const {
   // EXISTING_MAIL,
 } = require('../errors/errors');
 
+const { JWTT } = process.env;
+
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(STATUS_OK).send(users))
@@ -106,7 +108,7 @@ const login = (req, res, next) => {
         .then(() => {
           const token = jwt.sign(
             { _id: user._id },
-            'some-secret-key',
+            JWTT,
             { expiresIn: '7d' },
           );
           // console.log(token);
@@ -126,7 +128,7 @@ const login = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  User.findById({ _id: req.user._id })
+  User.findById(req.user._id)
     .then((user) => res.send(user))
     .catch((err) => next(err));
 };
