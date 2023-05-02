@@ -1,4 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
+// const ExistingMailError = require('./ExistingMailError');
 
 const joiErrorsLogin = celebrate({
   body: Joi.object().keys({

@@ -118,7 +118,11 @@ const login = (req, res, next) => {
           res.status(STATUS_OK).send({ message: 'Успешный вход', token });
         });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.statusCode === 401) {
+        next(new Error('Неправильные почта или пароль'));
+      } else next(err);
+    });
 };
 
 const getUserInfo = (req, res, next) => {
