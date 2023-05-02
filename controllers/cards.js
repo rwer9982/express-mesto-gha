@@ -42,13 +42,7 @@ const deleteCard = (req, res, next) => {
       Card.findByIdAndRemove({ _id: cardId });
       res.send(card);
     })
-    .catch((err) => {
-      if (err.statusCode === 404) {
-        next(new NotFoundError('Пользователь не существует'));
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 const likeCard = (req, res, next) => Card.findByIdAndUpdate(
