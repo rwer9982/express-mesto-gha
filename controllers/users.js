@@ -58,13 +58,13 @@ const getUserId = (req, res, next) => {
 const updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    // .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
+    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Некорректный данные'));
       } else if (err.statusCode === 404) {
-        next(new NotFoundError('Пользователь не существует'));
+        next(new NotFoundError('Пользователь с указанным id не существует'));
       } else {
         next(err);
       }
