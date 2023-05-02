@@ -131,13 +131,16 @@ const login = (req, res, next) => {
     });
 };
 
-const getUserInfo = (req, res) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        res.status(401).send({ message: 'Пользователь не найден' });
-      }
-      res.status(STATUS_OK).send(user);
+const getUserInfo = (req, res, next) => {
+  const { userId } = req.params;
+  User.findById(userId)
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.statusCode === 400) {
+        next(new ValidationError('Некорректный данные'));
+      } else if (err.statusCode === 404) {
+        next(new NotFoundError('Пользователь не существует'));
+      } else next(err);
     });
 };
 
