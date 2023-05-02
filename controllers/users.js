@@ -4,6 +4,7 @@ const User = require('../models/userSchema');
 const ValidationError = require('../errors/ValidationError');
 const ExistingMailError = require('../errors/ExistingMailError');
 const NotFoundError = require('../errors/NotFoundError');
+const AuthError = require('../errors/NotFoundError');
 
 const {
   // BAD_REQUEST,
@@ -97,14 +98,14 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        throw new AuthError('Неправильные почта или пароль');
       }
 
       // сравниваем переданный пароль и хеш из базы
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error('Неправильные почта или пароль'));
+            throw new AuthError('Неправильные почта или пароль');
           }
           return user;
         })
