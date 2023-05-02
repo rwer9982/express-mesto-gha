@@ -39,9 +39,9 @@ const deleteCard = (req, res, next) => {
       if (!card.owner.equals(userId)) {
         throw new NoAccessError('Карточку может удалить только её создатель');
       }
-      card.findByIdAndRemove({ _id: cardId });
-      res.send(card);
+      return Card.findByIdAndRemove({ _id: cardId });
     })
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Некорректный данные'));
