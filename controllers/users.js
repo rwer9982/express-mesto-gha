@@ -117,17 +117,23 @@ const login = (req, res, next) => {
           );
           console.log(token);
           res.status(STATUS_OK).send({ message: 'Успешный вход', token });
+        })
+        .catch((err) => {
+          if (err.statusCode === 401) {
+            next(new AuthError('Неправильные почта или пароль'));
+          } else next(err);
         });
     })
     .catch((err) => {
       if (err.statusCode === 401) {
-        next(new Error('Неправильные почта или пароль'));
+        next(new AuthError('Неправильные почта или пароль'));
       } else next(err);
     });
 };
 
 const getUserInfo = (req, res, next) => {
-  User.findById(req.user._id)
+  const { userId } = req.params;
+  return User.findById(userId)
     .then((user) => res.status(STATUS_OK).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
