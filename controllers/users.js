@@ -118,10 +118,20 @@ const login = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  const userId = req.user;
-  User.findById(userId)
-    .then((user) => res.send(user))
-    .catch((err) => next(err));
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+      res.status(STATUS_OK).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(ValidationError('Переданы некорректные данные'));
+      } else if (err.message === 'NotFound') {
+        next(new NotFoundError('Пользователь не найден'));
+      } else next(err);
+    });
 };
 
 module.exports = {
