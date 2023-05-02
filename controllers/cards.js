@@ -43,7 +43,6 @@ const deleteCard = (req, res, next) => {
         res.send(card);
       }
     })
-    // .then((card) => res.send(card))
     .catch((err) => next(err));
 };
 
