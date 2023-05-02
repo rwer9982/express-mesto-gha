@@ -14,8 +14,6 @@ const {
   // EXISTING_MAIL,
 } = require('../errors/errors');
 
-const { JWT_KEY = 'dev-key' } = process.env;
-
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(STATUS_OK).send(users))
@@ -106,7 +104,7 @@ const login = (req, res, next) => {
         .then(() => {
           const token = jwt.sign(
             { _id: user._id },
-            JWT_KEY,
+            'some-secret-key',
             { expiresIn: '7d' },
           );
           res.status(STATUS_OK).send({ message: 'Успешный вход', token });
