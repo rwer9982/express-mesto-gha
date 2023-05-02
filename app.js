@@ -34,7 +34,6 @@ app.use(routes);
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  console.log('next: ', next);
   res.status(err.statusCode).send({ message: err.message });
 });
 
