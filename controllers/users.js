@@ -78,7 +78,7 @@ const updateUserAvatar = (req, res, next) => {
     .then((user) => res.status(STATUS_OK).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError('Некорректный данные'));
+        next(new ValidationError('Некорректные данные'));
       } else if (err.statusCode === 404) {
         next(new NotFoundError('Пользователь не существует'));
       } else {
@@ -90,9 +90,6 @@ const updateUserAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email }).select('+password')
-    .orFail(() => {
-      throw new AuthError('Неправильные почта или пароль 0');
-    })
     .then((user) => {
       if (!user) {
         throw new AuthError('Неправильные почта или пароль 1');
@@ -110,28 +107,31 @@ const login = (req, res, next) => {
             'some-secret-key',
             { expiresIn: '7d' },
           );
+          console.log(token);
           res.status(STATUS_OK).send({ message: 'Успешный вход', token });
         })
-        .catch((err) => next(err));
+        .catch((err) => {
+          if (err.statusCode === 401) {
+            next(new AuthError('Неправильные почта или пароль'));
+          } else {
+            next(err);
+          }
+        });
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      if (err.statusCode === 401) {
+        next(new AuthError('Неправильные почта или пароль'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const getUserInfo = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден');
-      }
-      res.status(STATUS_OK).send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(ValidationError('Переданы некорректные данные'));
-      } else if (err.message === 'NotFound') {
-        next(new NotFoundError('Пользователь не найден'));
-      } else next(err);
-    });
+  const userId = req.user._id;
+  User.findById(userId)
+    .then((user) => res.send(user))
+    .catch((err) => next(err));
 };
 
 module.exports = {
