@@ -52,13 +52,7 @@ const getUserId = (req, res, next) => {
   User.findById(userId)
     .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.statusCode === 400) {
-        next(new ValidationError('Некорректный данные'));
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 const updateUserInfo = (req, res, next) => {
