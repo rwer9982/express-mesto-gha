@@ -40,10 +40,11 @@ const deleteCard = (req, res, next) => {
         throw new NoAccessError('Карточку может удалить только её создатель');
       } else {
         Card.findByIdAndRemove({ _id: cardId });
+        res.send(card);
       }
     })
-    .then((card) => res.send(card))
-    .catch(next);
+    // .then((card) => res.send(card))
+    .catch((err) => next(err));
 };
 
 const likeCard = (req, res, next) => Card.findByIdAndUpdate(
