@@ -31,12 +31,12 @@ app.post('/signup', joiErrorsCreateUser, createUser);
 
 app.use(routes);
 
+app.use(errors());
+
 app.use((err, req, res, next) => {
   console.log('next: ', next);
   res.status(err.statusCode).send({ message: err.message });
 });
-
-app.use(errors());
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
