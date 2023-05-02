@@ -136,7 +136,7 @@ const getUserInfo = (req, res, next) => {
   return User.findById(userId)
     .then((user) => res.status(STATUS_OK).send(user))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.statusCode === 400) {
         next(new ValidationError('Некорректный данные'));
       } else if (err.statusCode === 404) {
         next(new NotFoundError('Пользователь не существует'));
