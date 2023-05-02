@@ -4,7 +4,7 @@ const User = require('../models/userSchema');
 const ValidationError = require('../errors/ValidationError');
 const ExistingMailError = require('../errors/ExistingMailError');
 const NotFoundError = require('../errors/NotFoundError');
-const AuthError = require('../errors/NotFoundError');
+const AuthError = require('../errors/AuthError');
 
 const {
   // BAD_REQUEST,
