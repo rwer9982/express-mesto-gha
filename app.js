@@ -17,7 +17,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 });
 
 app.use(bodyParser.json());
-app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // app.use((req, res, next) => {
@@ -31,6 +30,11 @@ app.post('/signin', joiErrorsLogin, login);
 app.post('/signup', joiErrorsCreateUser, createUser);
 
 app.use(routes);
+
+app.use((err, req, res, next) => {
+  console.log('next: ', next);
+  res.status(err.statusCode).send({ message: err.message });
+});
 
 app.use(errors());
 
