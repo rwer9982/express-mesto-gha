@@ -90,16 +90,17 @@ const updateUserAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email }).select('+password')
+    .orFail(() => {
+      throw new AuthError('Неправильные почта или пароль 0');
+    })
     .then((user) => {
       if (!user) {
-        throw new AuthError('Неправильные почта или пароль');
+        throw new AuthError('Неправильные почта или пароль 1');
       }
-
-      // сравниваем переданный пароль и хеш из базы
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new AuthError('Неправильные почта или пароль');
+            throw new AuthError('Неправильные почта или пароль 2');
           }
           return user;
         })
@@ -111,21 +112,13 @@ const login = (req, res, next) => {
           );
           res.status(STATUS_OK).send({ message: 'Успешный вход', token });
         })
-        .catch((err) => {
-          if (err.statusCode === 401) {
-            next(new AuthError('Неправильные почта или пароль'));
-          } else next(err);
-        });
+        .catch((err) => next(err));
     })
-    .catch((err) => {
-      if (err.statusCode === 401) {
-        next(new AuthError('Неправильные почта или пароль'));
-      } else next(err);
-    });
+    .catch((err) => next(err));
 };
 
 const getUserInfo = (req, res, next) => {
-  const userId = req.user._id;
+  const userId = req.user;
   User.findById(userId)
     .then((user) => res.send(user))
     .catch((err) => next(err));
