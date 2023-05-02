@@ -5,7 +5,7 @@ const usersRouter = require('./users');
 const cardsRouter = require('./cards');
 const { auth } = require('../middlewares/auth');
 
-router.use('/cards', cardsRouter);
+router.use('/cards', auth, cardsRouter);
 router.use('/users', auth, usersRouter);
 router.use('/', auth, (req, res, next) => {
   next(new NotFoundError('ошибка пути'));
