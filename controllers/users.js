@@ -126,7 +126,8 @@ const login = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  User.findById(req.user._id)
+  const userId = req.user._id;
+  User.findById(userId)
     .then((user) => res.send(user))
     .catch((err) => next(err));
 };
