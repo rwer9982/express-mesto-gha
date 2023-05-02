@@ -109,8 +109,12 @@ const login = (req, res, next) => {
             'some-secret-key',
             { expiresIn: '7d' },
           );
-          // console.log(token);
-          res.status(STATUS_OK).send({ message: 'Успешный вход', token });
+          return res
+            .cookie('jwt', token, {
+              maxAge: 3600 * 24 * 365,
+              httpOnly: true,
+            })
+            .send({ message: 'Успешный вход', token });
         })
         .catch((err) => {
           if (err.statusCode === 401) {
