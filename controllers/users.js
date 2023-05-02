@@ -109,7 +109,7 @@ const login = (req, res, next) => {
             'some-secret-key',
             { expiresIn: '7d' },
           );
-          console.log(token);
+          // console.log(token);
           res.status(STATUS_OK).send({ message: 'Успешный вход', token });
         })
         .catch((err) => {
@@ -126,16 +126,9 @@ const login = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  const { userId } = req.params;
-  User.findById(userId)
+  User.findById(req.user._id)
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.statusCode === 400) {
-        next(new ValidationError('Некорректный данные'));
-      } else if (err.statusCode === 404) {
-        next(new NotFoundError('Пользователь не существует'));
-      } else next(err);
-    });
+    .catch((err) => next(err));
 };
 
 module.exports = {
