@@ -6,6 +6,9 @@ const ExistingMailError = require('../errors/ExistingMailError');
 const NotFoundError = require('../errors/NotFoundError');
 const AuthError = require('../errors/AuthError');
 
+const { JWT_SECRET = 'dev-key' } = process.env;
+// const { NODE_ENV, JWT_SECRET } = process.env;
+
 const {
   // BAD_REQUEST,
   // INTERNAL_SERVER_ERROR,
@@ -28,7 +31,6 @@ const createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    // .orFail(() => new ExistingMailError('Пользователь с таким E-mail уже существует'))
     .then((user) => res.status(STATUS_OK).send({
       name: user.name,
       about: user.about,
@@ -92,19 +94,19 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new AuthError('Неправильные почта или пароль 1');
+        throw new AuthError('Неправильные почта или пароль');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new AuthError('Неправильные почта или пароль 2');
+            throw new AuthError('Неправильные почта или пароль');
           }
           return user;
         })
         .then(() => {
           const token = jwt.sign(
             { _id: user._id },
-            'some-secret-key',
+            JWT_SECRET,
             { expiresIn: '7d' },
           );
           res.status(STATUS_OK).send({ message: 'Успешный вход', token });
