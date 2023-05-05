@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
+const cookieParser = require('cookie-parser');//
 const routes = require('./routes');
 const { createUser, login } = require('./controllers/users');
 const { joiErrorsCreateUser, joiErrorsLogin } = require('./errors/joiErrors');
@@ -43,6 +44,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
+app.use(cookieParser());//
 app.post('/signin', joiErrorsLogin, login);
 app.post('/signup', joiErrorsCreateUser, createUser);
 

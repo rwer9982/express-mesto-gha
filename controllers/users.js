@@ -109,6 +109,10 @@ const login = (req, res, next) => {
             JWT_SECRET,
             { expiresIn: '7d' },
           );
+          res.cookie('jwt', token, {
+            maxAge: 3600000,
+            httpOnly: true,
+          });
           res.status(STATUS_OK).send({ message: 'Успешный вход', token });
         })
         .catch((err) => {
