@@ -16,11 +16,12 @@ const auth = (req, res, next) => {
 
   try {
     payload = jwt.verify(token, JWT_SECRET);
+    console.log(payload);
   } catch (err) {
-    next(new AuthError('Необходима авторизация'));
+    next(new AuthError('неверный токен'));
   }
 
-  req.user = payload; // записываем пейлоуд в объект запроса
+  req.user._id = payload; // записываем пейлоуд в объект запроса
   // console.log(req.user);
 
   next(); // пропускаем запрос дальше
