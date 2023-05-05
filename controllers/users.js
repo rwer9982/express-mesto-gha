@@ -1,3 +1,4 @@
+require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
@@ -6,7 +7,7 @@ const ExistingMailError = require('../errors/ExistingMailError');
 const NotFoundError = require('../errors/NotFoundError');
 const AuthError = require('../errors/AuthError');
 
-const { JWT_SECRET = 'dev-key' } = process.env;
+const { JWT_SECRET } = process.env;
 // const { NODE_ENV, JWT_SECRET } = process.env;
 
 const {
@@ -109,6 +110,10 @@ const login = (req, res, next) => {
             JWT_SECRET,
             { expiresIn: '7d' },
           );
+          res.cookie('jwt', token, {
+            maxAge: 3600000,
+            httpOnly: true,
+          });
           res.status(STATUS_OK).send({ message: 'Успешный вход', token });
         })
         .catch((err) => {
