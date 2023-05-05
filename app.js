@@ -11,7 +11,7 @@ const { createUser, login } = require('./controllers/users');
 const { joiErrorsCreateUser, joiErrorsLogin } = require('./errors/joiErrors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 const app = express();
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
@@ -20,16 +20,19 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   //  useFindAndModify: false,
 });
 
-const allowedCors = [
-  'https://praktikum.tk',
-  'http://praktikum.tk',
-  'localhost:3000',
-  'https://localhost:3000',
-  'http://localhost:3000',
-  'localhost:3001',
-  'https://localhost:3001',
-  'http://localhost:3001',
-];
+const allowedCors = {
+  origin: [
+    'https://praktikum.tk',
+    'http://praktikum.tk',
+    'localhost:3000',
+    'https://localhost:3000',
+    'http://localhost:3000',
+    'localhost:3001',
+    'https://localhost:3001',
+    'http://localhost:3001',
+  ],
+  credentials: true,
+};
 
 app.use(cors(allowedCors));
 
