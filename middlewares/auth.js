@@ -21,7 +21,7 @@ const auth = (req, res, next) => {
     next(new AuthError('неверный токен'));
   }
 
-  req.user._id = payload; // записываем пейлоуд в объект запроса
+  req.user = payload; // записываем пейлоуд в объект запроса
   // console.log(req.user);
 
   next(); // пропускаем запрос дальше
