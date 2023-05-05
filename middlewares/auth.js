@@ -3,6 +3,8 @@ const AuthError = require('../errors/AuthError');
 
 const { JWT_SECRET = 'key' } = process.env;
 
+const extractBearerToken = (header) => header.replace('Bearer ', '');
+
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
@@ -11,12 +13,13 @@ const auth = (req, res, next) => {
     return;
   }
 
-  const token = authorization.replace('Bearer ', '');
+  // const token = authorization.replace('Bearer ', '');
+  const token = extractBearerToken(authorization);
   let payload;
 
   try {
     payload = jwt.verify(token, JWT_SECRET);
-    console.log(payload);
+    // console.log(payload);
   } catch (err) {
     next(new AuthError('неверный токен'));
   }
