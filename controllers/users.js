@@ -6,7 +6,7 @@ const ExistingMailError = require('../errors/ExistingMailError');
 const NotFoundError = require('../errors/NotFoundError');
 const AuthError = require('../errors/AuthError');
 
-const { JWT_SECRET = 'dev-key' } = process.env;
+const { JWT_SECRET } = process.env;
 // const { NODE_ENV, JWT_SECRET } = process.env;
 
 const {
