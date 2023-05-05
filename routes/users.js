@@ -12,10 +12,10 @@ const {
 } = require('../controllers/users');
 
 userRouter.get('/', getUsers);
+userRouter.get('/me', getUserInfo);
 userRouter.get('/:userId', joiErrorsGetUserId, getUserId);
 // userRouter.post('/', createUser);
 userRouter.patch('/me', joiErrorsUpdateUserInfo, updateUserInfo);
 userRouter.patch('/me/avatar', joiErrorsUpdateUserAvatar, updateUserAvatar);
-userRouter.get('/me', getUserInfo);
 
 module.exports = userRouter;
