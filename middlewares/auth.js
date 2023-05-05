@@ -12,7 +12,6 @@ const auth = (req, res, next) => {
   }
 
   const token = authorization.replace('Bearer ', '');
-
   let payload;
 
   try {
@@ -21,9 +20,9 @@ const auth = (req, res, next) => {
     next(new AuthError('Необходима авторизация'));
   }
 
-  req.user = payload; // записываем пейлоуд в объект запроса
+  req.user = payload;
 
-  next(); // пропускаем запрос дальше
+  next();
 };
 
 module.exports = { auth };
