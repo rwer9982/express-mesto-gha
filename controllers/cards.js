@@ -45,6 +45,8 @@ const deleteCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Некорректный данные'));
+      } else if (err.statusCode === 404) {
+        next(new NotFoundError('Пользователь не существует'));
       } else {
         next(err);
       }
@@ -60,6 +62,8 @@ const likeCard = (req, res, next) => Card.findByIdAndUpdate(
   .catch((err) => {
     if (err.name === 'CastError') {
       next(new ValidationError('Некорректный данные'));
+    } else if (err.statusCode === 404) {
+      next(new NotFoundError('Карточка с указанным id не существует'));
     } else {
       next(err);
     }
@@ -74,6 +78,8 @@ const dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
   .catch((err) => {
     if (err.name === 'CastError') {
       next(new ValidationError('Некорректный данные'));
+    } else if (err.statusCode === 404) {
+      next(new NotFoundError('Карточка с указанным id не существует'));
     } else {
       next(err);
     }
