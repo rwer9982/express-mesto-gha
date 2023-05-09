@@ -24,6 +24,7 @@ const auth = (req, res, next) => {
     payload = jwt.verify(req.cookies.jwt, JWT_SECRET);
   } catch (err) {
     next(new AuthError('неверный токен'));
+    return;
   }
 
   req.user = payload; // записываем пейлоуд в объект запроса
