@@ -79,13 +79,7 @@ const updateUserAvatar = (req, res, next) => {
     .orFail(() => new NotFoundError('Пользователь не существует'))
     .then((user) => res.status(STATUS_OK).send(user))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new ValidationError('Некорректные данные'));
-      } else if (err.statusCode === 404) {
-        next(new NotFoundError('Пользователь не существует'));
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
@@ -112,25 +106,13 @@ const login = (req, res, next) => {
           res.cookie('jwt', token, {
             maxAge: 3600000,
             httpOnly: true,
-            sameSite: true,
+            // sameSite: true,
           });
-          res.status(STATUS_OK).send({ message: 'Успешный вход', token });
+          res.status(STATUS_OK).send({ token });
         })
-        .catch((err) => {
-          if (err.statusCode === 401) {
-            next(new AuthError('Неправильные почта или пароль'));
-          } else {
-            next(err);
-          }
-        });
+        .catch((err) => next(err));
     })
-    .catch((err) => {
-      if (err.statusCode === 401) {
-        next(new AuthError('Неправильные почта или пароль'));
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 const getUserInfo = (req, res, next) => {
